@@ -1,0 +1,52 @@
+<div class="container">
+    <h1>Posts List</h1>
+    <div class="search">
+        <input  type="text" class="form-control" placeholder="search by title ..." [(ngModel)] = "title">
+    </div>
+    <div class="item" *ngIf="!show && !sshow">
+        <button type="button" class="btn btn-primary"  (click)="showForm ()">Add</button>
+    </div>
+    <div class="form" *ngIf="show || sshow">
+        <form [formGroup]="addForm" (ngSubmit)="show ? addPost() : editPost()">
+            <div class="item">
+              <input type="text" class="form-control" formControlName="title" placeholder="Title">
+              <div class="alert alert-danger" role="alert" *ngIf="addForm.get('title')?.touched && addForm.get('title')?.hasError('required')">
+                <i class="bi bi-exclamation-circle"></i> This field is required
+              </div>
+            </div>
+            <div class="item">
+              <textarea class="form-control" formControlName="body" rows="3" placeholder="Content ..."></textarea>
+              <div class="alert alert-danger" role="alert" *ngIf="addForm.get('body')?.touched && addForm.get('body')?.hasError('required')">
+                <i class="bi bi-exclamation-circle"></i> This field is required
+              </div>
+            </div>
+            <div class="item">
+                <button type="submit" class="btn btn-primary" [disabled]="!addForm.valid">{{show ?'Add'  : 'Edit'}}</button>
+            </div>
+        </form>
+    </div>
+    <div class="content">
+      
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Title</th>
+                <th scope="col">Body</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let post of posts | filter : title">
+                <th scope="row">{{post.id}}</th>
+                <td>{{post.title}}</td>
+                <td>{{post.body}}</td>
+                <td class="button">
+                    <button type="button" class="btn btn-warning" (click)="edit(post)">Edit</button>
+                    <button type="button" class="btn btn-danger" (click)="delete(post.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+</div>
