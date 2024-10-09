@@ -18,6 +18,8 @@ export class PostListComponent implements OnInit{
   post!:Post
   id : number = 0
   title : string = ""
+  currentPage : number = 1
+  pageSize : number = 4
   constructor(private postService : PostService,private formBuilder : FormBuilder,private toastr: ToastrService){}
 
   ngOnInit(): void {
