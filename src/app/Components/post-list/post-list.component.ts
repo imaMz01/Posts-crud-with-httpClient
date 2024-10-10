@@ -20,6 +20,8 @@ export class PostListComponent implements OnInit{
   title : string = ""
   currentPage : number = 1
   pageSize : number = 4
+  showPopup: boolean = false
+  idDelete !: number 
   constructor(private postService : PostService,private formBuilder : FormBuilder,private toastr: ToastrService){}
 
   ngOnInit(): void {
@@ -29,7 +31,6 @@ export class PostListComponent implements OnInit{
       body : ['',[Validators.required]]
     })
   }
-
   getPosts(){
     this.postService.getPosts().subscribe(data =>{
        if(data !=null){
@@ -41,9 +42,28 @@ export class PostListComponent implements OnInit{
       }
     })
   }
-
+  filter(){
+    this.postService.filter(this.title).subscribe(data =>{
+      if(data){
+        this.posts=data
+      }
+    },error => {
+      console.error()
+    })
+  }
+  openPopup(id:number) {
+    this.showPopup = true;
+    this.idDelete=id
+  }
+  closePopup() {
+    this.showPopup = false;
+  }
   showForm(){
     this.show=true
+  }
+  hideForm(){
+    this.show=false
+    this.sshow=false
   }
   addPost(){
     this.post= this.addForm.value
@@ -90,13 +110,14 @@ export class PostListComponent implements OnInit{
     })
   }
 
-  delete(id :number){
-    this.postService.deletePost(id).subscribe((data)=>{
+  delete(){
+    this.postService.deletePost(this.idDelete).subscribe((data)=>{
       console.log(data);
-      let index = this.posts.findIndex(post=> post.id === id)
+      let index = this.posts.findIndex(post=> post.id === this.idDelete)
       console.log(index)
       if(index!=-1){
         this.posts.splice(index,1)
+        this.showPopup=false
         this.toastr.success("the post was deleted successfully")
       } 
     },error => {

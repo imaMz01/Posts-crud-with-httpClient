@@ -1,10 +1,10 @@
 <div class="container">
   <h1>Posts List</h1>
   <div class="search">
-      <input *ngIf="!show && !sshow"  type="text" class="form-control" placeholder="search by title ..." [(ngModel)] = "title">
+      <input *ngIf="!show && !sshow"  type="text" class="form-control" placeholder="search by title ..." [(ngModel)] = "title" (ngModelChange)="filter()">
   </div>
   <div class="item" *ngIf="!show && !sshow">
-      <button type="button" class="btn btn-primary"  (click)="showForm ()">Add</button>
+    <button type="button" class="btn btn-primary"  (click)="showForm ()">Add</button>
   </div>
   <div class="form" *ngIf="show || sshow">
       <form [formGroup]="addForm" (ngSubmit)="show ? addPost() : editPost()">
@@ -20,13 +20,30 @@
               <i class="bi bi-exclamation-circle"></i> This field is required
             </div>
           </div>
-          <div class="item">
+          <div class="item button">
+              <button type="button" class="btn btn-secondary" (click)="hideForm()">Cancel</button>
               <button type="submit" class="btn btn-primary" [disabled]="!addForm.valid">{{show ?'Add'  : 'Edit'}}</button>
           </div>
       </form>
   </div>
+  <div class="modal" [ngClass]="{'show': showPopup}"  tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Action</h5>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this post?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closePopup()">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="delete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="content">
-    <table class="table table-striped" >
+     <table class="table table-striped" >
         <thead>
           <tr>
             <th scope="col"></th>
@@ -36,13 +53,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let post of posts | filter : title | paginate : {itemsPerPage: pageSize, currentPage: currentPage}">
+          <tr *ngFor="let post of posts | paginate : {itemsPerPage: pageSize, currentPage: currentPage}">
             <th scope="row">{{post.id}}</th>
             <td>{{post.title}}</td>
             <td>{{post.body}}</td>
             <td class="button">
                 <button type="button" class="btn btn-warning" (click)="edit(post)"><i class="bi bi-pencil-square"></i></button>
-                <button type="button" class="btn btn-danger" (click)="delete(post.id)"><i class="bi bi-trash3-fill"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openPopup(post.id)"><i class="bi bi-trash3-fill"></i></button>
             </td>
           </tr>
         </tbody>

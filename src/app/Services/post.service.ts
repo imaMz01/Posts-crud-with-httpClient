@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { Post } from '../Models/Post';
 
 @Injectable({
@@ -39,6 +39,13 @@ export class PostService {
 
   deletePost(id: number) : Observable<any| null>{
     return this.httpClient.delete<any>(this.url+ `${id}`)
+  }
+  filter(title : string) : Observable<Array<Post>>{
+    return this.httpClient.get<Array<Post>>(this.url).pipe(
+      map(posts => posts.filter(
+        post => post.title.toLowerCase().includes(title.toLowerCase())
+      ))
+    )
   }
   private handleError(error: HttpErrorResponse) {
     // Log the error to the console
